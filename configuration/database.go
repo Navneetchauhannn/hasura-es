@@ -265,11 +265,13 @@ func getMappings(indexName string, ctx context.Context) (interface{}, error) {
 // maps Elasticsearch field types to Hasura types
 func MapElasticsearchTypeToHasura(esType string) string {
 	switch esType {
-	case "text", "keyword", "date", "date_nanos", "ip", "version":
+	case "keyword":
 		return "String"
-	case "integer", "long", "short":
+	case "boolean":
+		return "Boolean"
+	case "byte", "short", "integer", "long", "unsigned_long":
 		return "Int"
-	case "double", "float":
+	case "double", "float", "half_float", "scaled_float":
 		return "Float"
 	default:
 		return ""
@@ -291,11 +293,11 @@ func getObjectTypes(fields schema.ObjectTypeFields, scalar map[string]bool, prop
 			if !scalar[valueData["type"].(string)] {
 				scalar[valueData["type"].(string)] = true
 			}
-			// hasuraType := MapElasticsearchTypeToHasura(valueData["type"].(string))
-			// if hasuraType == "" {
-			// 	continue
-			// }
-			field.Type = schema.NewNamedType(valueData["type"].(string)).Encode()
+			hasuraType := MapElasticsearchTypeToHasura(valueData["type"].(string))
+			if hasuraType == "" {
+				hasuraType = valueData["type"].(string)
+			}
+			field.Type = schema.NewNamedType(hasuraType).Encode()
 			if parentField != "" {
 				fields[parentField+"."+key] = field
 			} else {

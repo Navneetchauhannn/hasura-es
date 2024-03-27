@@ -138,74 +138,74 @@ func (mc *Connector) GetSchema(ctx context.Context, configuration *Configuration
 						Type:        schema.NewNamedType("keyword").Encode(),
 						Description: utils.ToPtr("An author"),
 					},
-					"category": schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"currency": schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
+					"category.keyword": schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"currency":         schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
 					"customer_birth_date": schema.ObjectField{
-						Type:        schema.NewNamedType("keyword").Encode(),
+						Type:        schema.NewNullableNamedType("keyword").Encode(),
 						Description: utils.ToPtr("handle date object"),
 					},
-					"customer_first_name": schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"customer_full_name":  schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"customer_gender":     schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"customer_id":         schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"customer_last_name":  schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"customer_phone":      schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"day_of_week":         schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"day_of_week_i":       schema.ObjectField{Type: schema.NewNamedType("integer").Encode()},
+					"customer_first_name.keyword": schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"customer_full_name.keyword":  schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"customer_gender":             schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"customer_id":                 schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"customer_last_name.keyword":  schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"customer_phone":              schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"day_of_week":                 schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"day_of_week_i":               schema.ObjectField{Type: schema.NewNullableNamedType("integer").Encode()},
 					// "event":               schema.ObjectField{Type: schema.NewNestedObject("event").Encode()},
 					// "geoip":               schema.ObjectField{Type: schema.NewNestedObject("geoip").Encode()},
-					"manufacturer": schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
+					"manufacturer.keyword": schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
 					"order_date": schema.ObjectField{
-						Type:        schema.NewNamedType("keyword").Encode(),
+						Type:        schema.NewNullableNamedType("keyword").Encode(),
 						Description: utils.ToPtr("handle date object"),
 					},
-					// "products":              schema.ObjectField{Type: schema.NewNamedType("products").Encode()},
-					"sku":                   schema.ObjectField{Type: schema.NewArrayType(schema.NewNamedType("keyword")).Encode()},
-					"taxful_total_price":    schema.ObjectField{Type: schema.NewNamedType("Float").Encode()},
-					"taxless_total_price":   schema.ObjectField{Type: schema.NewNamedType("Float").Encode()},
-					"total_quantity":        schema.ObjectField{Type: schema.NewNamedType("integer").Encode()},
-					"total_unique_products": schema.ObjectField{Type: schema.NewNamedType("integer").Encode()},
-					"type":                  schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"user":                  schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
+					// "products":              schema.ObjectField{Type: schema.NewNullableNamedType("products").Encode()},
+					"sku":                   schema.ObjectField{Type: schema.NewArrayType(schema.NewNullableNamedType("keyword")).Encode()},
+					"taxful_total_price":    schema.ObjectField{Type: schema.NewNullableNamedType("Float").Encode()},
+					"taxless_total_price":   schema.ObjectField{Type: schema.NewNullableNamedType("Float").Encode()},
+					"total_quantity":        schema.ObjectField{Type: schema.NewNullableNamedType("integer").Encode()},
+					"total_unique_products": schema.ObjectField{Type: schema.NewNullableNamedType("integer").Encode()},
+					"type":                  schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"user":                  schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
 				},
 			},
 			"event": schema.ObjectType{
 				Fields: schema.ObjectTypeFields{
-					"dataset": schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
+					"dataset": schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
 				},
 			},
 			"geoip": schema.ObjectType{
 				Fields: schema.ObjectTypeFields{
-					"city_name":        schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"continent_name":   schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"country_iso_code": schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"location":         schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"region_name":      schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
+					"city_name":        schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"continent_name":   schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"country_iso_code": schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"location":         schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"region_name":      schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
 				},
 			},
 			"products": schema.ObjectType{
 				Fields: schema.ObjectTypeFields{
-					"_id":             schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"base_price":      schema.ObjectField{Type: schema.NewNamedType("Float").Encode()},
-					"base_unit_price": schema.ObjectField{Type: schema.NewNamedType("Float").Encode()},
-					"category":        schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
+					"_id":             schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"base_price":      schema.ObjectField{Type: schema.NewNullableNamedType("Float").Encode()},
+					"base_unit_price": schema.ObjectField{Type: schema.NewNullableNamedType("Float").Encode()},
+					"category":        schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
 					"created_on": schema.ObjectField{
 						Description: utils.ToPtr("handle date object"),
-						Type:        schema.NewNamedType("Float").Encode(),
+						Type:        schema.NewNullableNamedType("Float").Encode(),
 					},
-					"discount_amount":      schema.ObjectField{Type: schema.NewNamedType("Float").Encode()},
-					"discount_percentage":  schema.ObjectField{Type: schema.NewNamedType("Float").Encode()},
-					"manufacturer":         schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"min_price":            schema.ObjectField{Type: schema.NewNamedType("Float").Encode()},
-					"price":                schema.ObjectField{Type: schema.NewNamedType("Float").Encode()},
-					"product_name":         schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"quantity":             schema.ObjectField{Type: schema.NewNamedType("integer").Encode()},
-					"sku":                  schema.ObjectField{Type: schema.NewNamedType("keyword").Encode()},
-					"tax_amount":           schema.ObjectField{Type: schema.NewNamedType("Float").Encode()},
-					"taxful_price":         schema.ObjectField{Type: schema.NewNamedType("Float").Encode()},
-					"taxless_price":        schema.ObjectField{Type: schema.NewNamedType("Float").Encode()},
-					"unit_discount_amount": schema.ObjectField{Type: schema.NewNamedType("Float").Encode()},
-					"product_id":           schema.ObjectField{Type: schema.NewNamedType("integer").Encode()}},
+					"discount_amount":      schema.ObjectField{Type: schema.NewNullableNamedType("Float").Encode()},
+					"discount_percentage":  schema.ObjectField{Type: schema.NewNullableNamedType("Float").Encode()},
+					"manufacturer":         schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"min_price":            schema.ObjectField{Type: schema.NewNullableNamedType("Float").Encode()},
+					"price":                schema.ObjectField{Type: schema.NewNullableNamedType("Float").Encode()},
+					"product_name":         schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"quantity":             schema.ObjectField{Type: schema.NewNullableNamedType("integer").Encode()},
+					"sku":                  schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"tax_amount":           schema.ObjectField{Type: schema.NewNullableNamedType("Float").Encode()},
+					"taxful_price":         schema.ObjectField{Type: schema.NewNullableNamedType("Float").Encode()},
+					"taxless_price":        schema.ObjectField{Type: schema.NewNullableNamedType("Float").Encode()},
+					"unit_discount_amount": schema.ObjectField{Type: schema.NewNullableNamedType("Float").Encode()},
+					"product_id":           schema.ObjectField{Type: schema.NewNullableNamedType("integer").Encode()}},
 			},
 		},
 		Collections: []schema.CollectionInfo{
@@ -242,11 +242,11 @@ func (mc *Connector) MutationExplain(ctx context.Context, configuration *Configu
 
 func (mc *Connector) Query(ctx context.Context, configuration *Configuration, state *configuration.State, request *schema.QueryRequest) (schema.QueryResponse, error) {
 
-	queryJosn, err := json.Marshal(request)
-	if err != nil {
-		fmt.Println("Error Marshling query")
-	}
-	fmt.Printf("QueryRequest: %v", string(queryJosn))
+	// queryJosn, err := json.Marshal(request)
+	// if err != nil {
+	// 	fmt.Println("Error Marshling query")
+	// }
+	// fmt.Printf("QueryRequest: %v", string(queryJosn))
 
 	variableSets := request.Variables
 	if variableSets == nil {
@@ -261,9 +261,15 @@ func (mc *Connector) Query(ctx context.Context, configuration *Configuration, st
 			return nil, err
 		}
 
+		rowset, err := json.Marshal(rowSet)
+		if err != nil {
+			fmt.Println("Error Marshling query")
+		}
+		fmt.Printf("RowSet: %v", string(rowset))
+
 		rowSets = append(rowSets, *rowSet)
 	}
-	fmt.Println("rowSet: ", rowSets)
+	// fmt.Println("rowSet: ", rowSets)
 	return rowSets, nil
 }
 
@@ -394,7 +400,7 @@ func executeQueryWithVariables(
 	state *configuration.State,
 ) (*schema.RowSet, error) {
 
-	fmt.Println("Query: ", query)
+	// fmt.Println("Query: ", query)
 
 	argumentValues := make(map[string]schema.Argument)
 

@@ -129,7 +129,7 @@ func evalElasticExpression(
 
 			match := make(map[string]interface{})
 			match[expression.Column.Name] = rightValue.(string)
-			queryDSL.Query["must_match"] = match
+			queryDSL.Query["term"] = match
 			return nil
 		case "like":
 			rightValue, err := evalElasticComparisonValue(variables, state, expression.Value)
@@ -215,11 +215,13 @@ func sortElasticCollection(
 		switch target := orderElem.Target.Interface().(type) {
 
 		case *schema.OrderByColumn:
-			order := make(map[string]interface{})
-			sort := make(map[string]interface{})
-			order["order"] = string(orderElem.OrderDirection)
-			sort[target.Name] = order
-			query.Sort = append(query.Sort, sort)
+			if target.Name != "_id" {
+				order := make(map[string]interface{})
+				sort := make(map[string]interface{})
+				order["order"] = string(orderElem.OrderDirection)
+				sort[target.Name] = order
+				query.Sort = append(query.Sort, sort)
+			}
 
 		// case *schema.OrderBySingleColumnAggregate:
 		// 	return evalOrderBySingleColumnAggregate(collectionRelationships, variables, state, item, target.Path, target.Column, target.Function)
@@ -238,26 +240,35 @@ func evalElasticAggregate(aggregate *schema.Aggregate, aggKey string, query *Que
 	switch agg := aggregate.Interface().(type) {
 	case *schema.AggregateStarCount:
 		field := make(map[string]interface{})
-		field["script"] = 1
+		field["script"] = "1"
 		function := make(map[string]any)
 		function["value_count"] = field
 		query.Aggs[aggKey] = function
 		return nil
 	case *schema.AggregateColumnCount:
 		field := make(map[string]interface{})
-		field["field"] = agg.Column
+		if agg.Column == "_id" {
+			field["script"] = "1"
+		} else {
+			field["field"] = agg.Column
+		}
 		function := make(map[string]any)
 		function["value_count"] = field
 		query.Aggs[aggKey] = function
 		return nil
 	case *schema.AggregateSingleColumn:
 		// query, err := evalElaticAggregateFunction(agg.Function, agg.Column, aggKey, query)
-		field := make(map[string]interface{})
-		field["field"] = agg.Column
-		function := make(map[string]any)
 
 		if agg.Function == "min" || agg.Function == "max" {
-			function[agg.Function] = field
+			field := make(map[string]interface{})
+			function := make(map[string]any)
+			if agg.Column == "_id" {
+				field["script"] = "1"
+				function["value_count"] = field
+			} else {
+				field["field"] = agg.Column
+				function[agg.Function] = field
+			}
 			query.Aggs[aggKey] = function
 			return nil
 		}
@@ -308,24 +319,45 @@ func performQuery(index string, queryDSL *QueryDSL) ([]map[string]interface{}, m
 
 	aggregations := make(map[string]any)
 	// Extract _id and category fields and put them into the empty map
+	total_hits := row["hits"].(map[string]any)["total"].(map[string]any)["value"]
+	fmt.Println(total_hits)
+
 	hits := row["hits"].(map[string]any)["hits"].([]any)
 	for _, hit := range hits {
-		extractedData := make(map[string]any)
+
 		hitData := hit.(map[string]any)
-		source := hitData["_source"].(map[string]any)
-		for key, value := range source {
-			extractedData[key] = value
+		if queryDSL.Source != nil {
+			extractedData := make(map[string]any)
+			for _, field := range queryDSL.Source {
+				extractedData[field] = nil
+			}
+			source := hitData["_source"].(map[string]any)
+			for key, value := range source {
+				if value == "_id" {
+					extractedData["_id"] = hitData["_id"]
+				}
+				extractedData[key] = value
+			}
+			rows = append(rows, extractedData)
 		}
-
-		var ok bool
-		aggregations, ok = row["aggregations"].(map[string]any)
-		if !ok {
-			fmt.Println("not found aggregations in elastic response")
-		}
-
-		extractedData["_id"] = hitData["_id"]
-		rows = append(rows, extractedData)
 	}
+	var ok bool
+	row_aggs, ok := row["aggregations"].(map[string]any)
+	if !ok {
+		fmt.Println("not found aggregations in elastic response")
+	}
+	for aggs_name, aggs := range row_aggs {
+		aggs := aggs.(map[string]any)
+		if aggs["value"] != nil {
+
+			aggregations[aggs_name] = total_hits
+
+		}
+	}
+	// aggregations = row_aggs
+	// if row_aggs["count"] != nil {
+	// 	aggregations["count"] = row_aggs["count"].(map[string]any)["value"].(int)
+	// }
 
 	return rows, aggregations, nil
 }
