@@ -3,8 +3,21 @@
         {
             "arguments": {},
             "foreign_keys": {},
-            "name": "test_mappingss",
-            "type": "test_mappings",
+            "name": "nested_indexs",
+            "type": "nested_index",
+            "uniqueness_constraints": {
+                "ID": {
+                    "unique_columns": [
+                        "_id"
+                    ]
+                }
+            }
+        },
+        {
+            "arguments": {},
+            "foreign_keys": {},
+            "name": "shirtss",
+            "type": "shirts",
             "uniqueness_constraints": {
                 "ID": {
                     "unique_columns": [
@@ -25,328 +38,649 @@
                     ]
                 }
             }
+        },
+        {
+            "arguments": {},
+            "foreign_keys": {},
+            "name": "test_mappingss",
+            "type": "test_mappings",
+            "uniqueness_constraints": {
+                "ID": {
+                    "unique_columns": [
+                        "_id"
+                    ]
+                }
+            }
+        },
+        {
+            "arguments": {},
+            "foreign_keys": {},
+            "name": "my-indexs",
+            "type": "my-index",
+            "uniqueness_constraints": {
+                "ID": {
+                    "unique_columns": [
+                        "_id"
+                    ]
+                }
+            }
         }
     ],
     "functions": [],
     "object_types": {
-        "kibana_sample_data_ecommerce": {
+        "comments": {
             "fields": {
-                "_id.keyword": {
+                "author": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "text",
+                            "type": "named"
+                        }
                     }
                 },
+                "author.keyword": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                }
+            }
+        },
+        "event": {
+            "fields": {
+                "dataset": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                }
+            }
+        },
+        "geoip": {
+            "fields": {
+                "city_name": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                },
+                "continent_name": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                },
+                "country_iso_code": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                },
+                "location": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "geo_point",
+                            "type": "named"
+                        }
+                    }
+                },
+                "region_name": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                }
+            }
+        },
+        "kibana_sample_data_ecommerce": {
+            "fields": {
                 "category": {
                     "type": {
-                        "name": "text",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "text",
+                            "type": "named"
+                        }
                     }
                 },
                 "category.keyword": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 },
                 "currency": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 },
                 "customer_birth_date": {
                     "type": {
-                        "name": "date",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "date",
+                            "type": "named"
+                        }
                     }
                 },
                 "customer_first_name": {
                     "type": {
-                        "name": "text",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "text",
+                            "type": "named"
+                        }
                     }
                 },
                 "customer_first_name.keyword": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 },
                 "customer_full_name": {
                     "type": {
-                        "name": "text",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "text",
+                            "type": "named"
+                        }
                     }
                 },
                 "customer_full_name.keyword": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 },
                 "customer_gender": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 },
                 "customer_id": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 },
                 "customer_last_name": {
                     "type": {
-                        "name": "text",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "text",
+                            "type": "named"
+                        }
                     }
                 },
                 "customer_last_name.keyword": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 },
                 "customer_phone": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 },
                 "day_of_week": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 },
                 "day_of_week_i": {
                     "type": {
-                        "name": "integer",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Int",
+                            "type": "named"
+                        }
                     }
                 },
                 "email": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 },
-                "event.dataset": {
+                "event": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "event",
+                            "type": "named"
+                        }
                     }
                 },
-                "geoip.city_name": {
+                "geoip": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
-                    }
-                },
-                "geoip.continent_name": {
-                    "type": {
-                        "name": "keyword",
-                        "type": "named"
-                    }
-                },
-                "geoip.country_iso_code": {
-                    "type": {
-                        "name": "keyword",
-                        "type": "named"
-                    }
-                },
-                "geoip.location": {
-                    "type": {
-                        "name": "geo_point",
-                        "type": "named"
-                    }
-                },
-                "geoip.region_name": {
-                    "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "geoip",
+                            "type": "named"
+                        }
                     }
                 },
                 "manufacturer": {
                     "type": {
-                        "name": "text",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "text",
+                            "type": "named"
+                        }
                     }
                 },
                 "manufacturer.keyword": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 },
                 "order_date": {
                     "type": {
-                        "name": "date",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "date",
+                            "type": "named"
+                        }
                     }
                 },
                 "order_id": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 },
-                "product_name.keyword": {
+                "products": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
-                    }
-                },
-                "products._id": {
-                    "type": {
-                        "name": "text",
-                        "type": "named"
-                    }
-                },
-                "products.base_price": {
-                    "type": {
-                        "name": "half_float",
-                        "type": "named"
-                    }
-                },
-                "products.base_unit_price": {
-                    "type": {
-                        "name": "half_float",
-                        "type": "named"
-                    }
-                },
-                "products.category": {
-                    "type": {
-                        "name": "text",
-                        "type": "named"
-                    }
-                },
-                "products.created_on": {
-                    "type": {
-                        "name": "date",
-                        "type": "named"
-                    }
-                },
-                "products.discount_amount": {
-                    "type": {
-                        "name": "half_float",
-                        "type": "named"
-                    }
-                },
-                "products.discount_percentage": {
-                    "type": {
-                        "name": "half_float",
-                        "type": "named"
-                    }
-                },
-                "products.manufacturer": {
-                    "type": {
-                        "name": "text",
-                        "type": "named"
-                    }
-                },
-                "products.min_price": {
-                    "type": {
-                        "name": "half_float",
-                        "type": "named"
-                    }
-                },
-                "products.price": {
-                    "type": {
-                        "name": "half_float",
-                        "type": "named"
-                    }
-                },
-                "products.product_id": {
-                    "type": {
-                        "name": "long",
-                        "type": "named"
-                    }
-                },
-                "products.product_name": {
-                    "type": {
-                        "name": "text",
-                        "type": "named"
-                    }
-                },
-                "products.quantity": {
-                    "type": {
-                        "name": "integer",
-                        "type": "named"
-                    }
-                },
-                "products.sku": {
-                    "type": {
-                        "name": "keyword",
-                        "type": "named"
-                    }
-                },
-                "products.tax_amount": {
-                    "type": {
-                        "name": "half_float",
-                        "type": "named"
-                    }
-                },
-                "products.taxful_price": {
-                    "type": {
-                        "name": "half_float",
-                        "type": "named"
-                    }
-                },
-                "products.taxless_price": {
-                    "type": {
-                        "name": "half_float",
-                        "type": "named"
-                    }
-                },
-                "products.unit_discount_amount": {
-                    "type": {
-                        "name": "half_float",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "products",
+                            "type": "named"
+                        }
                     }
                 },
                 "sku": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 },
                 "taxful_total_price": {
                     "type": {
-                        "name": "half_float",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Float",
+                            "type": "named"
+                        }
                     }
                 },
                 "taxless_total_price": {
                     "type": {
-                        "name": "half_float",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Float",
+                            "type": "named"
+                        }
                     }
                 },
                 "total_quantity": {
                     "type": {
-                        "name": "integer",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Int",
+                            "type": "named"
+                        }
                     }
                 },
                 "total_unique_products": {
                     "type": {
-                        "name": "integer",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Int",
+                            "type": "named"
+                        }
                     }
                 },
                 "type": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 },
                 "user": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                }
+            }
+        },
+        "my-index": {
+            "fields": {
+                "comments": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "comments",
+                            "type": "named"
+                        }
+                    }
+                }
+            }
+        },
+        "nested_index": {
+            "fields": {
+                "comments": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "comments",
+                            "type": "named"
+                        }
+                    }
+                }
+            }
+        },
+        "products": {
+            "fields": {
+                "_id": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "text",
+                            "type": "named"
+                        }
+                    }
+                },
+                "_id.keyword": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                },
+                "base_price": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Float",
+                            "type": "named"
+                        }
+                    }
+                },
+                "base_unit_price": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Float",
+                            "type": "named"
+                        }
+                    }
+                },
+                "category": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "text",
+                            "type": "named"
+                        }
+                    }
+                },
+                "category.keyword": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                },
+                "created_on": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "date",
+                            "type": "named"
+                        }
+                    }
+                },
+                "discount_amount": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Float",
+                            "type": "named"
+                        }
+                    }
+                },
+                "discount_percentage": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Float",
+                            "type": "named"
+                        }
+                    }
+                },
+                "manufacturer": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "text",
+                            "type": "named"
+                        }
+                    }
+                },
+                "manufacturer.keyword": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                },
+                "min_price": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Float",
+                            "type": "named"
+                        }
+                    }
+                },
+                "price": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Float",
+                            "type": "named"
+                        }
+                    }
+                },
+                "product_id": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Int",
+                            "type": "named"
+                        }
+                    }
+                },
+                "product_name": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "text",
+                            "type": "named"
+                        }
+                    }
+                },
+                "product_name.keyword": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                },
+                "quantity": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Int",
+                            "type": "named"
+                        }
+                    }
+                },
+                "sku": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                },
+                "tax_amount": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Float",
+                            "type": "named"
+                        }
+                    }
+                },
+                "taxful_price": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Float",
+                            "type": "named"
+                        }
+                    }
+                },
+                "taxless_price": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Float",
+                            "type": "named"
+                        }
+                    }
+                },
+                "unit_discount_amount": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Float",
+                            "type": "named"
+                        }
+                    }
+                }
+            }
+        },
+        "shirts": {
+            "fields": {
+                "brand": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                },
+                "color": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                },
+                "model": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 }
             }
@@ -355,20 +689,123 @@
             "fields": {
                 "age": {
                     "type": {
-                        "name": "integer",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Int",
+                            "type": "named"
+                        }
                     }
                 },
                 "email": {
                     "type": {
-                        "name": "keyword",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                },
+                "labels": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "flattened",
+                            "type": "named"
+                        }
                     }
                 },
                 "name": {
                     "type": {
-                        "name": "text",
-                        "type": "named"
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "text",
+                            "type": "named"
+                        }
+                    }
+                },
+                "user": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "user",
+                            "type": "named"
+                        }
+                    }
+                },
+                "user_email": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "alias",
+                            "type": "named"
+                        }
+                    }
+                },
+                "user_name": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "alias",
+                            "type": "named"
+                        }
+                    }
+                }
+            }
+        },
+        "user": {
+            "fields": {
+                "birth_date": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Int",
+                            "type": "named"
+                        }
+                    }
+                },
+                "first": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "text",
+                            "type": "named"
+                        }
+                    }
+                },
+                "first.keyword": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
+                    }
+                },
+                "id": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "Int",
+                            "type": "named"
+                        }
+                    }
+                },
+                "last": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "text",
+                            "type": "named"
+                        }
+                    }
+                },
+                "last.keyword": {
+                    "type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "String",
+                            "type": "named"
+                        }
                     }
                 }
             }
@@ -376,7 +813,87 @@
     },
     "procedures": [],
     "scalar_types": {
+        "alias": {
+            "aggregate_functions": {},
+            "comparison_operators": {}
+        },
         "date": {
+            "aggregate_functions": {
+                "avg": {
+                    "result_type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "date",
+                            "type": "named"
+                        }
+                    }
+                },
+                "cardinality": {
+                    "result_type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "date",
+                            "type": "named"
+                        }
+                    }
+                },
+                "max": {
+                    "result_type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "date",
+                            "type": "named"
+                        }
+                    }
+                },
+                "min": {
+                    "result_type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "date",
+                            "type": "named"
+                        }
+                    }
+                },
+                "percentiles": {
+                    "result_type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "date",
+                            "type": "named"
+                        }
+                    }
+                },
+                "stats": {
+                    "result_type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "date",
+                            "type": "named"
+                        }
+                    }
+                },
+                "sum": {
+                    "result_type": {
+                        "type": "nullable",
+                        "underlying_type": {
+                            "name": "date",
+                            "type": "named"
+                        }
+                    }
+                }
+            },
+            "comparison_operators": {
+                "eq": {
+                    "argument_type": {
+                        "name": "date",
+                        "type": "named"
+                    },
+                    "type": "custom"
+                }
+            }
+        },
+        "flattened": {
             "aggregate_functions": {},
             "comparison_operators": {}
         },
@@ -389,91 +906,12 @@
             "comparison_operators": {}
         },
         "integer": {
-            "aggregate_functions": {
-                "avg": {
-                    "result_type": {
-                        "type": "nullable",
-                        "underlying_type": {
-                            "name": "integer",
-                            "type": "named"
-                        }
-                    }
-                },
-                "cardinality": {
-                    "result_type": {
-                        "type": "nullable",
-                        "underlying_type": {
-                            "name": "integer",
-                            "type": "named"
-                        }
-                    }
-                },
-                "max": {
-                    "result_type": {
-                        "type": "nullable",
-                        "underlying_type": {
-                            "name": "integer",
-                            "type": "named"
-                        }
-                    }
-                },
-                "min": {
-                    "result_type": {
-                        "type": "nullable",
-                        "underlying_type": {
-                            "name": "integer",
-                            "type": "named"
-                        }
-                    }
-                },
-                "percentiles": {
-                    "result_type": {
-                        "type": "nullable",
-                        "underlying_type": {
-                            "name": "integer",
-                            "type": "named"
-                        }
-                    }
-                },
-                "stats": {
-                    "result_type": {
-                        "type": "nullable",
-                        "underlying_type": {
-                            "name": "integer",
-                            "type": "named"
-                        }
-                    }
-                },
-                "sum": {
-                    "result_type": {
-                        "type": "nullable",
-                        "underlying_type": {
-                            "name": "integer",
-                            "type": "named"
-                        }
-                    }
-                }
-            },
-            "comparison_operators": {
-                "eq": {
-                    "argument_type": {
-                        "name": "integer",
-                        "type": "named"
-                    },
-                    "type": "custom"
-                },
-                "in": {
-                    "argument_type": {
-                        "name": "integer",
-                        "type": "named"
-                    },
-                    "type": "custom"
-                }
-            }
+            "aggregate_functions": {},
+            "comparison_operators": {}
         },
         "keyword": {
             "aggregate_functions": {
-                "cardinality": {
+                "string_stats": {
                     "result_type": {
                         "type": "nullable",
                         "underlying_type": {
@@ -499,6 +937,20 @@
                     "type": "custom"
                 },
                 "like": {
+                    "argument_type": {
+                        "name": "keyword",
+                        "type": "named"
+                    },
+                    "type": "custom"
+                },
+                "nlike": {
+                    "argument_type": {
+                        "name": "keyword",
+                        "type": "named"
+                    },
+                    "type": "custom"
+                },
+                "regexp": {
                     "argument_type": {
                         "name": "keyword",
                         "type": "named"

@@ -178,6 +178,8 @@ func introspect(ctx context.Context, Schema *schema.SchemaResponse) error {
 
 	schmaResponseObjecttypes := make(schema.SchemaResponseObjectTypes)
 	scalar := make(map[string]bool)
+	relationships := make(map[string][]string)
+
 	for _, index := range indicesData {
 		// Fetching mappings for each user index
 		result, err := getMappings(index, ctx)
@@ -192,14 +194,17 @@ func introspect(ctx context.Context, Schema *schema.SchemaResponse) error {
 		}
 
 		// generate schema.ObjectType object
-		var objects schema.ObjectType
-		fields := make(schema.ObjectTypeFields)
-		getObjectTypes(fields, scalar, properties, "")
-		fmt.Println(scalar)
-		objects.Description = nil
-		objects.Fields = fields
-		schmaResponseObjecttypes[index] = objects
+		// var objects schema.ObjectType
+		// fields := make(schema.ObjectTypeFields)
+		// getObjectTypes(fields, scalar, properties, "")
+		// fmt.Println(scalar)
+		// objects.Description = nil
+		// objects.Fields = fields
+		// schmaResponseObjecttypes[index] = objects
+
+		generateObjectTypes(properties, schmaResponseObjecttypes, index, scalar, relationships)
 	}
+	fmt.Println(relationships)
 
 	// genereate schema.ScalarTypes object
 	ScalarTypes, err := getScalarTypes(scalar, ctx)
@@ -274,7 +279,65 @@ func MapElasticsearchTypeToHasura(esType string) string {
 	case "double", "float", "half_float", "scaled_float":
 		return "Float"
 	default:
-		return ""
+		return esType
+	}
+}
+
+func generateObjectTypes(
+	properties map[string]any,
+	schmaResponseObjecttypes schema.SchemaResponseObjectTypes,
+	index string,
+	scalar map[string]bool,
+	relationships map[string][]string,
+) {
+	if properties == nil {
+		return
+	}
+	var objType schema.ObjectType
+	objType.Fields = make(schema.ObjectTypeFields)
+
+	generateFields(properties, schmaResponseObjecttypes, objType.Fields, index, scalar, "", relationships)
+
+	schmaResponseObjecttypes[index] = objType
+}
+
+func generateFields(
+	properties map[string]any,
+	schmaResponseObjecttypes schema.SchemaResponseObjectTypes,
+	fields schema.ObjectTypeFields,
+	index string,
+	scalar map[string]bool,
+	parentField string,
+	relationships map[string][]string,
+) {
+	for key, property := range properties {
+		var field schema.ObjectField
+		property := property.(map[string]any)
+
+		if property["properties"] != nil {
+			relationships[index] = append(relationships[index], key)
+
+			generateObjectTypes(property["properties"].(map[string]any), schmaResponseObjecttypes, key, scalar, relationships)
+			field.Type = schema.NewNullableType(schema.NewNamedType(key)).Encode()
+			fields[key] = field
+			continue
+		}
+		if property["type"] != nil {
+			if !scalar[property["type"].(string)] {
+				scalar[property["type"].(string)] = true
+			}
+			hasuraType := MapElasticsearchTypeToHasura(property["type"].(string))
+			field.Type = schema.NewNullableNamedType(hasuraType).Encode()
+
+			if parentField != "" {
+				fields[parentField+"."+key] = field
+			} else {
+				fields[key] = field
+			}
+		}
+		if property["fields"] != nil {
+			generateFields(property["fields"].(map[string]any), schmaResponseObjecttypes, fields, index, scalar, key, relationships)
+		}
 	}
 }
 
@@ -294,9 +357,6 @@ func getObjectTypes(fields schema.ObjectTypeFields, scalar map[string]bool, prop
 				scalar[valueData["type"].(string)] = true
 			}
 			hasuraType := MapElasticsearchTypeToHasura(valueData["type"].(string))
-			if hasuraType == "" {
-				hasuraType = valueData["type"].(string)
-			}
 			field.Type = schema.NewNamedType(hasuraType).Encode()
 			if parentField != "" {
 				fields[parentField+"."+key] = field

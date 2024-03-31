@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/hasura/ndc-sdk-go-reference/configuration"
 	query_engine "github.com/hasura/ndc-sdk-go-reference/query"
 
@@ -56,8 +57,33 @@ type Connector struct{}
 func (mc *Connector) ParseConfiguration(ctx context.Context, rawConfiguration string) (*Configuration, error) {
 	return &Configuration{}, nil
 }
-func (mc *Connector) TryInitState(ctx context.Context, configuration *Configuration, metrics *connector.TelemetryState) (*configuration.State, error) {
-	return nil, nil
+func (mc *Connector) TryInitState(ctx context.Context, configurations *Configuration, metrics *connector.TelemetryState) (*configuration.State, error) {
+	// var Config configuration.Config
+
+	// ymlFile, err := os.ReadFile("C:/Users/navnit.chauhan/Projects/Hasura-Elasticsearch_Connector/elasticsearch-queries/elastic/config.yml")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+
+	// err = yaml.Unmarshal(ymlFile, &Config)
+	// if err != nil {
+	// 	fmt.Println("Error unmarshaling the data")
+	// }
+	// fmt.Println(Config.Elasticsearch.Username)
+	// cert, _ := ioutil.ReadFile(Config.Elasticsearch.Cert)
+	newClient, err := elasticsearch.NewClient(elasticsearch.Config{
+		Addresses: []string{"https://12f248d44c594b04b835c35a7b513e95.us-central1.gcp.cloud.es.io:443"},
+		Username:  "enterprise_search",
+		Password:  "changeme",
+		// CACert:    cert,
+	})
+	if err != nil {
+		panic(err)
+	}
+	var state configuration.State
+	state.ElasticsearchClient = newClient
+	fmt.Println("Connection Success!")
+	return &state, nil
 }
 
 func (mc *Connector) HealthCheck(ctx context.Context, configuration *Configuration, state *configuration.State) error {
@@ -152,14 +178,14 @@ func (mc *Connector) GetSchema(ctx context.Context, configuration *Configuration
 					"customer_phone":              schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
 					"day_of_week":                 schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
 					"day_of_week_i":               schema.ObjectField{Type: schema.NewNullableNamedType("integer").Encode()},
-					// "event":               schema.ObjectField{Type: schema.NewNestedObject("event").Encode()},
-					// "geoip":               schema.ObjectField{Type: schema.NewNestedObject("geoip").Encode()},
-					"manufacturer.keyword": schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
+					"event":                       schema.ObjectField{Type: schema.NewNullableType(schema.NewNullableNamedType("event")).Encode()},
+					"geoip":                       schema.ObjectField{Type: schema.NewNullableType(schema.NewNullableNamedType("geoip")).Encode()},
+					"manufacturer.keyword":        schema.ObjectField{Type: schema.NewNullableNamedType("keyword").Encode()},
 					"order_date": schema.ObjectField{
 						Type:        schema.NewNullableNamedType("keyword").Encode(),
 						Description: utils.ToPtr("handle date object"),
 					},
-					// "products":              schema.ObjectField{Type: schema.NewNullableNamedType("products").Encode()},
+					"products":              schema.ObjectField{Type: schema.NewNullableType(schema.NewNullableNamedType("products")).Encode()},
 					"sku":                   schema.ObjectField{Type: schema.NewArrayType(schema.NewNullableNamedType("keyword")).Encode()},
 					"taxful_total_price":    schema.ObjectField{Type: schema.NewNullableNamedType("Float").Encode()},
 					"taxless_total_price":   schema.ObjectField{Type: schema.NewNullableNamedType("Float").Encode()},

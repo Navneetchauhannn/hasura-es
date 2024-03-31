@@ -8,7 +8,6 @@ import (
 
 	"github.com/hasura/ndc-sdk-go-reference/configuration"
 
-	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/hasura/ndc-sdk-go/schema"
 )
 
@@ -17,6 +16,7 @@ type QueryDSL struct {
 	Query  map[string]interface{}   `json:"query,omitempty"`
 	From   int                      `json:"from,omitempty"`
 	Size   int                      `json:"size,omitempty"`
+	Pit    map[string]interface{}   `json:"pit,omitempty"`
 	Sort   []map[string]interface{} `json:"sort,omitempty"`
 	Aggs   map[string]interface{}   `json:"aggs,omitempty"`
 }
@@ -45,8 +45,6 @@ func ExecuteElasticQuery(
 		queryDSL.Query["match_all"] = struct{}{}
 	}
 
-	paginateElastic(query.Limit, query.Offset, &queryDSL)
-
 	queryDSL.Sort = make([]map[string]interface{}, 0)
 	err := sortElasticCollection(variables, state, query.OrderBy, &queryDSL)
 	if err != nil {
@@ -62,14 +60,20 @@ func ExecuteElasticQuery(
 		}
 	}
 
-	rows, aggregates, err := performQuery(collection, &queryDSL)
+	queryDSL.Pit = make(map[string]any)
+	paginateElastic(state, query.Limit, query.Offset, &queryDSL)
+
+	query_result, err := performQuery(state, collection, &queryDSL)
 	if err != nil {
 		fmt.Println("Error performing query:", err)
 		return nil, err
 	}
 
+	rows := handleFieldResponse(&queryDSL, query_result)
+	aggregate := handleAggregateResponse(query_result)
+
 	return &schema.RowSet{
-		Aggregates: aggregates,
+		Aggregates: aggregate,
 		Rows:       rows,
 	}, nil
 }
@@ -191,13 +195,26 @@ func evalElasticExpression(
 	}
 }
 
-func paginateElastic(limit *int, offset *int, query *QueryDSL) {
+func paginateElastic(state *configuration.State, limit *int, offset *int, query *QueryDSL) {
 	if offset != nil {
 		query.From = *offset
 	}
 
 	if limit != nil {
 		query.Size = *limit
+	}
+
+	if isPitExpired() {
+		PitID, err := createPointInTime(state.ElasticsearchClient)
+		if err != nil {
+			fmt.Println("Error creating pit")
+			return
+		}
+		fmt.Println("PIT EXPIRED, CREATING PIT: ", PitID)
+	}
+	if pitID != "" {
+		query.Pit["id"] = pitID
+		query.Pit["keep_alive"] = "1m"
 	}
 }
 
@@ -246,15 +263,15 @@ func evalElasticAggregate(aggregate *schema.Aggregate, aggKey string, query *Que
 		query.Aggs[aggKey] = function
 		return nil
 	case *schema.AggregateColumnCount:
-		field := make(map[string]interface{})
-		if agg.Column == "_id" {
-			field["script"] = "1"
-		} else {
-			field["field"] = agg.Column
+		term := map[string]any{
+			"script": map[string]any{
+				"source": "doc.containsKey('" + agg.Column + "')",
+			},
 		}
-		function := make(map[string]any)
-		function["value_count"] = field
-		query.Aggs[aggKey] = function
+
+		query.Aggs[aggKey] = map[string]any{
+			"terms": term,
+		}
 		return nil
 	case *schema.AggregateSingleColumn:
 		// query, err := evalElaticAggregateFunction(agg.Function, agg.Column, aggKey, query)
@@ -280,86 +297,47 @@ func evalElasticAggregate(aggregate *schema.Aggregate, aggKey string, query *Que
 	}
 }
 
-func performQuery(index string, queryDSL *QueryDSL) ([]map[string]interface{}, map[string]any, error) {
+func performQuery(state *configuration.State, index string, queryDSL *QueryDSL) (map[string]any, error) {
 	// cert, _ := ioutil.ReadFile("C:/Users/navnit.chauhan/L&D/Go/elasticsearch/ca-cert.pem")
-	client, err := elasticsearch.NewClient(elasticsearch.Config{
-		Addresses: []string{"https://12f248d44c594b04b835c35a7b513e95.us-central1.gcp.cloud.es.io:443"},
-		Username:  "enterprise_search",
-		Password:  "changeme",
-		// CACert:    cert,
-	})
-	if err != nil {
-		panic(err)
-	}
+	// client, err := elasticsearch.NewClient(elasticsearch.Config{
+	// 	Addresses: []string{"https://12f248d44c594b04b835c35a7b513e95.us-central1.gcp.cloud.es.io:443"},
+	// 	Username:  "enterprise_search",
+	// 	Password:  "changeme",
+	// 	// CACert:    cert,
+	// })
+	// if err != nil {
+	// 	panic(err)
+	// }
+	client := state.ElasticsearchClient
 	// Perform the search request
 	query, err := json.Marshal(queryDSL)
 	if err != nil {
 		fmt.Println("Error Marshaling Query")
-		return nil, nil, err
+		return nil, err
 	}
 	fmt.Printf("QueryDSL :%v", string(query))
 	res, err := client.Search(
 		client.Search.WithContext(context.Background()),
-		client.Search.WithIndex("kibana_sample_data_ecommerce"),
+		// client.Search.WithIndex("kibana_sample_data_ecommerce"),
 		client.Search.WithBody(strings.NewReader(string(query))),
 		client.Search.WithTrackTotalHits(true),
 	)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	defer res.Body.Close()
 
 	// Handle response
-	row := make(map[string]any)
-	rows := make([]map[string]any, 0)
+	query_result := make(map[string]any)
 
-	if err := json.NewDecoder(res.Body).Decode(&row); err != nil {
+	if err := json.NewDecoder(res.Body).Decode(&query_result); err != nil {
 		fmt.Println("Error parsing response body:", err)
+		return nil, err
 	}
-
-	aggregations := make(map[string]any)
 	// Extract _id and category fields and put them into the empty map
-	total_hits := row["hits"].(map[string]any)["total"].(map[string]any)["value"]
-	fmt.Println(total_hits)
-
-	hits := row["hits"].(map[string]any)["hits"].([]any)
-	for _, hit := range hits {
-
-		hitData := hit.(map[string]any)
-		if queryDSL.Source != nil {
-			extractedData := make(map[string]any)
-			for _, field := range queryDSL.Source {
-				extractedData[field] = nil
-			}
-			source := hitData["_source"].(map[string]any)
-			for key, value := range source {
-				if value == "_id" {
-					extractedData["_id"] = hitData["_id"]
-				}
-				extractedData[key] = value
-			}
-			rows = append(rows, extractedData)
-		}
-	}
-	var ok bool
-	row_aggs, ok := row["aggregations"].(map[string]any)
-	if !ok {
-		fmt.Println("not found aggregations in elastic response")
-	}
-	for aggs_name, aggs := range row_aggs {
-		aggs := aggs.(map[string]any)
-		if aggs["value"] != nil {
-
-			aggregations[aggs_name] = total_hits
-
-		}
-	}
-	// aggregations = row_aggs
-	// if row_aggs["count"] != nil {
-	// 	aggregations["count"] = row_aggs["count"].(map[string]any)["value"].(int)
-	// }
-
-	return rows, aggregations, nil
+	// total_hits := row["hits"].(map[string]any)["total"].(map[string]any)["value"]
+	// fmt.Println(total_hits)
+	return query_result, nil
 }
 
 func evalElasticComparisonValue(
@@ -386,4 +364,51 @@ func evalElasticComparisonValue(
 			"value": comparisonValue,
 		})
 	}
+}
+
+func handleFieldResponse(queryDSL *QueryDSL, query_result map[string]any) []map[string]any {
+	rows := make([]map[string]any, 0)
+
+	hits := query_result["hits"].(map[string]any)["hits"].([]any)
+	for _, hit := range hits {
+
+		hitData := hit.(map[string]any)
+		if queryDSL.Source != nil {
+			extractedData := make(map[string]any)
+			for _, field := range queryDSL.Source {
+				extractedData[field] = nil
+			}
+			source := hitData["_source"].(map[string]any)
+			for key, value := range source {
+				if value == "_id" {
+					extractedData["_id"] = hitData["_id"]
+				}
+				extractedData[key] = value
+			}
+			rows = append(rows, extractedData)
+		}
+	}
+
+	return rows
+}
+
+func handleAggregateResponse(row map[string]any) map[string]any {
+	aggregate := make(map[string]any)
+
+	row_aggs, ok := row["aggregations"].(map[string]any)
+	if ok {
+		for aggs_name, aggs := range row_aggs {
+			aggs := aggs.(map[string]any)
+			aggregate[aggs_name] = aggs["value"]
+			buckets, ok := aggs["buckets"].([]any)
+			if ok {
+				for _, bucket := range buckets {
+					bucket := bucket.(map[string]any)
+					aggregate[aggs_name] = bucket["doc_count"]
+				}
+			}
+		}
+	}
+
+	return aggregate
 }

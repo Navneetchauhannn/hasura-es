@@ -52,10 +52,11 @@ type Institution struct {
 }
 
 type State struct {
-	Authors      []Author
-	Articles     []Article
-	Institutions []Institution
-	Telemetry    *connector.TelemetryState
+	Authors             []Author
+	Articles            []Article
+	Institutions        []Institution
+	ElasticsearchClient *elasticsearch.Client
+	Telemetry           *connector.TelemetryState
 }
 
 func (s *State) GetLatestArticle() []int {
